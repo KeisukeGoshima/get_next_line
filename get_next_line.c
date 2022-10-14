@@ -12,11 +12,10 @@
 
 #include "get_next_line.h"
 
-
 int	search_storage_idx(const char *s, int c)
 {
 	int	i;
-	
+
 	i = 0;
 	if (s == NULL)
 		return (-1);
@@ -33,7 +32,7 @@ char	*get_line(const char *s, int idx, char *buf)
 {
 	char	*line;
 	int		i;
-	
+
 	free(buf);
 	if (ft_strlen(s) == 0)
 		return (NULL);
@@ -52,7 +51,7 @@ char	*get_line(const char *s, int idx, char *buf)
 	return (line);
 }
 
-char	*storage_update(char* storage, int idx)
+char	*storage_update(char *storage, int idx)
 {
 	size_t	i;
 	size_t	j;
@@ -72,7 +71,7 @@ char	*storage_update(char* storage, int idx)
 	}
 	while (j + k < i)
 	{
-		new[k] = storage[j+k];
+		new[k] = storage[j + k];
 		k++;
 	}
 	new[k] = '\0';
@@ -127,17 +126,17 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-#include <stdio.h>
-int main(void)
-{
-	int fd;
-	char *str;
-	fd = open("./test", O_RDONLY);
-	str = get_next_line(fd);
-	while (str != NULL)
-	{
-		printf("%s", str);
-		str = get_next_line(fd);
-	}
-	return (0);
-}
+// #include <stdio.h>
+// int main(void)
+// {
+// 	int fd;
+// 	char *str;
+// 	fd = open("./test", O_RDONLY);
+// 	str = get_next_line(fd);
+// 	while (str != NULL)
+// 	{
+// 		printf("%s", str);
+// 		str = get_next_line(fd);
+// 	}
+// 	return (0);
+// }
