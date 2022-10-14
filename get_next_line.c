@@ -51,7 +51,7 @@ char	*get_line(const char *s, int idx, char *buf)
 	return (line);
 }
 
-char	*storage_update(char *storage, int idx)
+char	*storage_update(char *storage, int idx, char *line)
 {
 	size_t	i;
 	size_t	j;
@@ -67,6 +67,7 @@ char	*storage_update(char *storage, int idx)
 	if (new == NULL)
 	{
 		free(storage);
+		free(line);
 		return (NULL);
 	}
 	while (j + k < i)
@@ -105,6 +106,8 @@ char	*get_next_line(int fd)
 	int			idx;
 	int			size;
 
+	if (fd < 0)
+		return (NULL);
 	idx = search_storage_idx(storage, '\n');
 	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (buf == NULL)
@@ -120,13 +123,14 @@ char	*get_next_line(int fd)
 	line = get_line(storage, idx, buf);
 	if (line == NULL)
 		return (NULL);
-	storage = storage_update(storage, idx);
+	storage = storage_update(storage, idx, line);
 	if (storage == NULL)
 		return (NULL);
 	return (line);
 }
 
 // #include <stdio.h>
+// #include <fcntl.h>
 // int main(void)
 // {
 // 	int fd;
