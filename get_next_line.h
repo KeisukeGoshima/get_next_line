@@ -14,8 +14,10 @@
 # define GET_NEXT_LINE_H
 # include <fcntl.h>
 # include <stdlib.h>
-# define BUFFER_SIZE 42
+# define BUFFER_SIZE 1024
 
 char	*get_next_line(int fd);
+size_t	ft_strlen(const char *s);
+char	*ft_strjoin(char *s1, char *s2);
 
 #endif
