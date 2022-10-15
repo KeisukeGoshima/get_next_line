@@ -106,7 +106,7 @@ char	*get_next_line(int fd)
 	int			idx;
 	int			size;
 
-	if (fd < 0)
+	if (fd < 0 || fd > 256)
 		return (NULL);
 	idx = search_storage_idx(storage, '\n');
 	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
@@ -126,6 +126,8 @@ char	*get_next_line(int fd)
 	storage = storage_update(storage, idx, line);
 	if (storage == NULL)
 		return (NULL);
+	if (ft_strlen(storage) == 0)
+		free(storage);
 	return (line);
 }
 
