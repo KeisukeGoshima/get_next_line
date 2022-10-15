@@ -39,7 +39,6 @@ int	search_storage_idx(const char *s, int c)
 char	*get_line(const char *s, int idx)
 {
 	char	*line;
-	int		i;
 
 	if (ft_strlen(s) == 0)
 		return (NULL);
@@ -93,7 +92,7 @@ char	*read_bufsize(char *storage, int fd, int *size)
 	temp = storage;
 	storage = ft_strjoin(storage, buf);
 	free_memory(buf);
-	free_memory(storage);
+	free_memory(temp);
 	return (storage);
 }
 
@@ -112,7 +111,7 @@ char	*get_next_line(int fd)
 	{
 		storage = read_bufsize(storage, fd, &size);
 		if (storage == NULL)
-			return (free_memory(storage));
+			return (NULL);
 		idx = search_storage_idx(storage, '\n');
 	}
 	line = get_line(storage, idx);
@@ -120,7 +119,7 @@ char	*get_next_line(int fd)
 		return (free_memory(storage));
 	storage = storage_update(storage, idx, line);
 	if (storage == NULL)
-		return (free_memory(storage));
+		return (NULL);
 	if (idx == -1 && size == 0)
 		free_memory(storage);
 	return (line);
