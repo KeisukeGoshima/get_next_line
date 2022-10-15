@@ -27,7 +27,7 @@ int	get_line_len(char *storage)
 	}
 	return (0);
 }
-#include <stdio.h>
+
 char	*read_stock(char *storage, int fd, int *end)
 {
 	char	*buf;
@@ -72,6 +72,7 @@ char	*get_line_and_update(char **storage, int len)
 		line[i] = (*storage)[i];
 		i++;
 	}
+	line[len] = '\0';
 	temp = *storage;
 	*storage = ft_strdup(&temp[len]);
 	free(temp);
@@ -125,18 +126,18 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-
-// #include <fcntl.h>
-// int main(void)
-// {
-// 	int fd;
-// 	char *str;
-// 	fd = open("./test", O_RDONLY);
-// 	str = get_next_line(fd);
-// 	while (str != NULL)
-// 	{
-// 		printf("%s", str);
-// 		str = get_next_line(fd);
-// 	}
-// 	return (0);
-// }
+#include <stdio.h>
+#include <fcntl.h>
+int main(void)
+{
+	int fd;
+	char *str;
+	fd = open("./test", O_RDONLY);
+	str = get_next_line(fd);
+	while (str != NULL)
+	{
+		printf("%s", str);
+		str = get_next_line(fd);
+	}
+	return (0);
+}
