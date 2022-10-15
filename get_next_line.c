@@ -18,7 +18,7 @@ int	get_line_len(char *storage)
 
 	if (storage == NULL)
 		return (0);
-	i = 0
+	i = 0;
 	while (storage[i] != '\0')
 	{
 		if (storage[i] == '\n')
@@ -40,9 +40,9 @@ char	*read_stock(char *storage, int fd, int *end)
 			free(storage);
 		return (0);
 	}
-	end = read(fd, buf, BUFFER_SIZE);
+	*end = read(fd, buf, BUFFER_SIZE);
 	temp = storage;
-	storage = ft_strjoin(*storage, buf);
+	storage = ft_strjoin(storage, buf);
 	free(buf);
 	if (temp != NULL)
 		free(temp);
@@ -64,7 +64,7 @@ char	*get_line_and_update(char **storage, int len)
 	i = 0;
 	while (i < len)
 	{
-		line[i] = *storage[i]
+		line[i] = *storage[i];
 		i++;
 	}
 	temp = *storage;
@@ -98,7 +98,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	len = get_line_len(storage);
 	*end = 1;
-	while (len == 0 && end != 0)
+	while (len == 0 && *end != 0)
 	{
 		storage = read_stock(storage, fd, end);
 		if (storage == NULL)
