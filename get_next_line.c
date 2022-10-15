@@ -11,132 +11,119 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
-char	*free_memory(char *memory)
-{
-	if (memory != NULL)
-		free(memory);
-	return (NULL);
-}
-
-int	search_storage_idx(const char *s, int c)
+int	get_line_len(char *storage)
 {
 	int	i;
 
-	i = 0;
-	if (s == NULL)
-		return (-1);
-	while (s[i] != '\0')
+	if (storage == NULL)
+		return (0);
+	i = 0
+	while (storage[i] != '\0')
 	{
-		if (s[i] == (char )c)
-			return (i);
+		if (storage[i] == '\n')
+			return (i+1);
 		i++;
 	}
-	return (-1);
+	return (0);
 }
 
-char	*get_line(const char *s, int idx)
+char	*read_stock(char *storage, int fd, int *end)
+{
+	char	*buf;
+	char	*temp;
+
+	buf =  malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (buf == NULL)
+	{
+		if (storage != NULL)
+			free(storage);
+		return (0);
+	}
+	end = read(fd, buf, BUFFER_SIZE);
+	temp = storage;
+	storage = ft_strjoin(*storage, buf);
+	free(buf);
+	if (temp != NULL)
+		free(temp);
+	return (storage);
+}
+
+char	*get_line_and_update(char **storage, int len)
 {
 	char	*line;
+	char	*temp;
+	int		i;
 
-	if (ft_strlen(s) == 0)
-		return (NULL);
-	if (idx == -1)
-		idx = ft_strlen(s) - 1;
-	line = ft_strdup_idx(s, idx);
+	line = malloc(sizeof(char) * (len + 1));
 	if (line == NULL)
+	{
+		free(*storage);
 		return (NULL);
+	}
+	i = 0;
+	while (i < len)
+	{
+		line[i] = *storage[i]
+		i++;
+	}
+	temp = *storage;
+	*storage = ft_strdup(&*storage[len]);
+	if (*storage == NULL)
+	{
+		free(*storage);
+		return (NULL);
+	}
 	return (line);
 }
 
-char	*storage_update(char *storage, int idx, char *line)
+char	*get_endline(char **storage)
 {
-	size_t	i;
-	size_t	j;
-	size_t	k;
-	char	*new;
+	char	*line;
 
-	i = ft_strlen(storage);
-	if (idx == -1)
-		idx = ft_strlen(storage) - 1;
-	j = (size_t)idx + 1;
-	k = 0;
-	new = malloc(sizeof(char) * (i - j + 1));
-	if (new == NULL)
-	{
-		free_memory(storage);
-		free_memory(line);
-		return (NULL);
-	}
-	while (j + k < i)
-	{
-		new[k] = storage[j + k];
-		k++;
-	}
-	new[k] = '\0';
-	free_memory(storage);
-	return (new);
-}
-
-char	*read_bufsize(char *storage, int fd, int *size)
-{
-	char	*temp;
-	char	*buf;
-	
-	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (buf == NULL)
-		return (free_memory(storage));
-	*size = read(fd, buf, BUFFER_SIZE);
-	buf[*size] = '\0';
-	temp = storage;
-	storage = ft_strjoin(storage, buf);
-	free_memory(buf);
-	free_memory(temp);
-	return (storage);
+	line = ft_strdup(*storage);
+	free(storage);
+	storage = NULL;
+	return (line);
 }
 
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*storage;
-	int			idx;
-	int			size;
+	static char *storage;
+	int			len;
+	int			*end;
 
-	if (fd < 0 || fd > 256)
+	if (fd < 0)
 		return (NULL);
-	idx = search_storage_idx(storage, '\n');
-	size = 1;
-	while (idx == -1 && size != 0)
+	len = get_line_len(storage);
+	*end = 1;
+	while (len == 0 && end != 0)
 	{
-		storage = read_bufsize(storage, fd, &size);
+		storage = read_stock(storage, fd, end);
 		if (storage == NULL)
 			return (NULL);
-		idx = search_storage_idx(storage, '\n');
+		len = get_line_len(storage);
 	}
-	line = get_line(storage, idx);
-	if (line == NULL)
-		return (free_memory(storage));
-	storage = storage_update(storage, idx, line);
-	if (storage == NULL)
-		return (NULL);
-	if (idx == -1 && size == 0)
-		free_memory(storage);
+	if (len != 0)
+		line = get_line_and_update(&storage, len);
+	else
+		line = get_endline(&storage);
 	return (line);
 }
 
-// #include <stdio.h>
-// #include <fcntl.h>
-// int main(void)
-// {
-// 	int fd;
-// 	char *str;
-// 	fd = open("./test", O_RDONLY);
-// 	str = get_next_line(2);
-// 	while (str != NULL)
-// 	{
-// 		printf("%s", str);
-// 		str = get_next_line(fd);
-// 	}
-// 	return (0);
-// }
+#include <stdio.h>
+#include <fcntl.h>
+int main(void)
+{
+	int fd;
+	char *str;
+	fd = open("./test", O_RDONLY);
+	str = get_next_line(2);
+	while (str != NULL)
+	{
+		printf("%s", str);
+		str = get_next_line(fd);
+	}
+	return (0);
+}

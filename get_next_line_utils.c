@@ -51,16 +51,16 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (dest);
 }
 
-char	*ft_strdup_idx(const char *s, int idx)
+char	*ft_strdup(const char *s)
 {
 	char	*str;
-	int		i;
+	size_t	i;
 
-	str = malloc(sizeof(char) * (idx + 2));
+	str = malloc(sizeof(char) * (ft_strlen(s) + 1));
 	if (str == NULL)
 		return (NULL);
 	i = 0;
-	while (i <= idx)
+	while (s[i] != '\0')
 	{
 		str[i] = s[i];
 		i++;
