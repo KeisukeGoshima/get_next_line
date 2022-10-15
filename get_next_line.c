@@ -113,17 +113,17 @@ char	*get_next_line(int fd)
 }
 
 
-#include <fcntl.h>
-int main(void)
-{
-	int fd;
-	char *str;
-	fd = open("./test", O_RDONLY);
-	str = get_next_line(fd);
-	while (str != NULL)
-	{
-		printf("%s", str);
-		str = get_next_line(fd);
-	}
-	return (0);
-}
+// #include <fcntl.h>
+// int main(void)
+// {
+// 	int fd;
+// 	char *str;
+// 	fd = open("./test", O_RDONLY);
+// 	str = get_next_line(fd);
+// 	while (str != NULL)
+// 	{
+// 		printf("%s", str);
+// 		str = get_next_line(fd);
+// 	}
+// 	return (0);
+// }
