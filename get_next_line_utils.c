@@ -68,3 +68,10 @@ char	*ft_strdup(const char *s)
 	str[i] = '\0';
 	return (str);
 }
+
+char	*memoryfree(char *memory)
+{
+	if (memory != NULL)
+		free(memory)
+	return (NULL);
+}
