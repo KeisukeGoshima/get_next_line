@@ -3,140 +3,104 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kgoshima <kgoshima@student.42.fr>          +#+  +:+       +#+        */
+/*   By: smiyu <smiyu@student.42tokyo.jp>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/09 10:59:20 by kgoshima          #+#    #+#             */
-/*   Updated: 2022/10/10 08:59:46 by kgoshima         ###   ########.fr       */
+/*   Created: 2022/09/26 20:06:35 by smiyu             #+#    #+#             */
+/*   Updated: 2022/10/14 17:37:30 by smiyu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
-char	*free_memory(char *memory)
+bool	endl_check(char *str, char **n_str)
 {
-	if (memory != NULL)
-		free(memory);
-	return (NULL);
-}
-
-int	search_storage_idx(const char *s, int c)
-{
-	int	i;
-
-	i = 0;
-	if (s == NULL)
-		return (-1);
-	while (s[i] != '\0')
+	if (str && *str)
 	{
-		if (s[i] == (char )c)
-			return (i);
-		i++;
+		str = ft_strchr(str, '\n');
+		if (str)
+		{
+			if (*(str + 1))
+				*n_str = ft_strdup(str + 1);
+			*(str + 1) = '\0';
+			return (true);
+		}
 	}
-	return (-1);
+	if (*n_str)
+		free(*n_str);
+	return (false);
 }
 
-char	*get_line(const char *s, int idx)
+void	free_and_assign(char **s1, char **s2, char *result)
 {
-	char	*line;
-
-	if (ft_strlen(s) == 0)
-		return (NULL);
-	if (idx == -1)
-		idx = ft_strlen(s) - 1;
-	line = ft_strdup_idx(s, idx);
-	if (line == NULL)
-		return (NULL);
-	return (line);
-}
-
-char	*storage_update(char *storage, int idx, char *line)
-{
-	size_t	i;
-	size_t	j;
-	size_t	k;
-	char	*new;
-
-	i = ft_strlen(storage);
-	if (idx == -1)
-		idx = ft_strlen(storage) - 1;
-	j = (size_t)idx + 1;
-	k = 0;
-	new = malloc(sizeof(char) * (i - j + 1));
-	if (new == NULL)
+	if (*s1)
 	{
-		free_memory(storage);
-		free_memory(line);
-		return (NULL);
+		free(*s1);
+		*s1 = NULL;
 	}
-	while (j + k < i)
+	if (*s2)
 	{
-		new[k] = storage[j + k];
-		k++;
+		free(*s2);
+		*s2 = NULL;
 	}
-	new[k] = '\0';
-	free_memory(storage);
-	return (new);
+	*s1 = result;
 }
 
-char	*read_bufsize(char *storage, int fd, int *size)
+int	read_and_assign(char **str, int fd)
 {
-	char	*temp;
-	char	*buf;
-	
-	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (buf == NULL)
-		return (free_memory(storage));
-	*size = read(fd, buf, BUFFER_SIZE);
-	buf[*size] = '\0';
-	temp = storage;
-	storage = ft_strjoin(storage, buf);
-	free_memory(buf);
-	free_memory(temp);
-	return (storage);
+	int	rc;
+
+	if (*str)
+	{
+		free(*str);
+		*str = NULL;
+	}
+	*str = (char *)malloc(sizeof(char) * (size_t)BUFFER_SIZE + 1);
+	rc = read(fd, *str, BUFFER_SIZE);
+	*(*str + rc) = '\0';
+	return (rc);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*line;
-	static char	*storage;
-	int			idx;
-	int			size;
+	int			rc;
+	bool		endl;
+	static char	*str;
+	char		*n_str;
+	char		*result;
 
 	if (fd < 0 || fd > 256)
 		return (NULL);
-	idx = search_storage_idx(storage, '\n');
-	size = 1;
-	while (idx == -1 && size != 0)
+	n_str = NULL;
+	endl = endl_check(str, &n_str);
+	result = ft_strdup(str);
+	if (!endl)
+		rc = read_and_assign(&str, fd);
+	while (str && rc > 0 && !endl)
 	{
-		storage = read_bufsize(storage, fd, &size);
-		if (storage == NULL)
+		endl = endl_check(str, &n_str);
+		free_and_assign(&result, &str, ft_strjoin(result, str));
+		if (!result)
 			return (NULL);
-		idx = search_storage_idx(storage, '\n');
+		if (!endl)
+			rc = read_and_assign(&str, fd);
 	}
-	line = get_line(storage, idx);
-	if (line == NULL)
-		return (free_memory(storage));
-	storage = storage_update(storage, idx, line);
-	if (storage == NULL)
-		return (NULL);
-	if (idx == -1 && size == 0)
-		free_memory(storage);
-	return (line);
+	free_and_assign(&str, &n_str, ft_strdup(n_str));
+	return (result);
 }
 
-// #include <stdio.h>
-// #include <fcntl.h>
-// int main(void)
-// {
-// 	int fd;
-// 	char *str;
-// 	fd = open("./test", O_RDONLY);
-// 	str = get_next_line(2);
-// 	while (str != NULL)
-// 	{
-// 		printf("%s", str);
-// 		str = get_next_line(fd);
-// 	}
-// 	return (0);
-// }
+#include <stdio.h>
+#include <fcntl.h>
+int main(void)
+{
+	char *str;
+	int	fd;
+
+	fd = open("./test", O_RDONLY);
+	str = get_next_line(fd);
+	while (str != NULL)
+	{
+		printf("%s", str);
+		str = get_next_line(fd);
+	}
+	return (0);
+}
