@@ -12,6 +12,13 @@
 
 #include "get_next_line.h"
 
+char	*free_storage(char *storage)
+{
+	if (storage != NULL)
+		free(storage);
+	return (NULL);
+}
+
 int	search_storage_idx(const char *s, int c)
 {
 	int	i;
@@ -28,12 +35,11 @@ int	search_storage_idx(const char *s, int c)
 	return (-1);
 }
 
-char	*get_line(const char *s, int idx, char *buf)
+char	*get_line(const char *s, int idx)
 {
 	char	*line;
 	int		i;
 
-	free(buf);
 	if (ft_strlen(s) == 0)
 		return (NULL);
 	if (idx == -1)
@@ -83,18 +89,20 @@ char	*storage_update(char *storage, int idx, char *line)
 char	*read_bufsize(char *storage, char *buf, int fd, int *size)
 {
 	char	*temp;
-
+	char	*buf;
+	
+	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (buf == NULL)
+		return (NULL);
 	*size = read(fd, buf, BUFFER_SIZE);
 	buf[*size] = '\0';
 	temp = storage;
 	storage = ft_strjoin(storage, buf);
+	free(buf);
 	if (temp != NULL)
 		free(temp);
 	if (storage == NULL)
-	{
-		free(buf);
 		return (NULL);
-	}
 	return (storage);
 }
 
@@ -107,27 +115,24 @@ char	*get_next_line(int fd)
 	int			size;
 
 	if (fd < 0 || fd > 256)
-		return (NULL);
+		return (free_storage(storage));
 	idx = search_storage_idx(storage, '\n');
-	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (buf == NULL)
-		return (NULL);
 	size = 1;
 	while (idx == -1 && size != 0)
 	{
 		storage = read_bufsize(storage, buf, fd, &size);
 		if (storage == NULL)
-			return (NULL);
+			return (free_storage(storage));
 		idx = search_storage_idx(storage, '\n');
 	}
-	line = get_line(storage, idx, buf);
+	line = get_line(storage, idx);
 	if (line == NULL)
-		return (NULL);
+		return (free_storage(storage));
 	storage = storage_update(storage, idx, line);
 	if (storage == NULL)
-		return (NULL);
+		return (free_storage(storage));
 	if (ft_strlen(storage) == 0)
-		free(storage);
+		free_storage(storage);
 	return (line);
 }
 
