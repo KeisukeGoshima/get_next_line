@@ -118,7 +118,8 @@ char	*get_next_line(int fd)
 		line = get_endline(&storage);
 	else
 	{
-		free(storage);
+		if (storage != NULL)
+			free(storage);
 		return (NULL);
 	}
 	if (line == NULL)
@@ -126,18 +127,19 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-#include <stdio.h>
-#include <fcntl.h>
-int main(void)
-{
-	int fd;
-	char *str;
-	fd = open("./test", O_RDONLY);
-	str = get_next_line(fd);
-	while (str != NULL)
-	{
-		printf("%s", str);
-		str = get_next_line(fd);
-	}
-	return (0);
-}
+// #include <stdio.h>
+// #include <fcntl.h>
+// int main(void)
+// {
+// 	int fd;
+// 	char *str;
+// 	fd = open("./test", O_RDONLY);
+// 	str = get_next_line(fd);
+// 	while (str != NULL)
+// 	{
+// 		printf("a");
+// 		printf("%s", str);
+// 		str = get_next_line(fd);
+// 	}
+// 	return (0);
+// }
