@@ -27,26 +27,26 @@ int	get_line_len(char *storage)
 	}
 	return (0);
 }
-
+#include <stdio.h>
 char	*read_stock(char *storage, int fd, int *end)
 {
 	char	*buf;
-	char	*temp;
+	char	*new;
 
 	buf =  malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (buf == NULL)
 	{
 		if (storage != NULL)
 			free(storage);
-		return (0);
+		return (NULL);
 	}
 	*end = read(fd, buf, BUFFER_SIZE);
-	temp = storage;
-	storage = ft_strjoin(storage, buf);
+	buf[*end] = '\0';
+	new = ft_strjoin(storage, buf);
 	free(buf);
-	if (temp != NULL)
-		free(temp);
-	return (storage);
+	if (storage != NULL)
+		free(storage);
+	return (new);
 }
 
 char	*get_line_and_update(char **storage, int len)
@@ -64,16 +64,14 @@ char	*get_line_and_update(char **storage, int len)
 	i = 0;
 	while (i < len)
 	{
-		line[i] = *storage[i];
+		line[i] = (*storage)[i];
 		i++;
 	}
 	temp = *storage;
-	*storage = ft_strdup(&*storage[len]);
+	*storage = ft_strdup(&temp[len]);
+	free(temp);
 	if (*storage == NULL)
-	{
-		free(*storage);
 		return (NULL);
-	}
 	return (line);
 }
 
@@ -82,8 +80,8 @@ char	*get_endline(char **storage)
 	char	*line;
 
 	line = ft_strdup(*storage);
-	free(storage);
-	storage = NULL;
+	free(*storage);
+	*storage = NULL;
 	return (line);
 }
 
@@ -92,7 +90,7 @@ char	*get_next_line(int fd)
 	char		*line;
 	static char *storage;
 	int			len;
-	int			*end;
+	int			end[1];
 
 	if (fd < 0)
 		return (NULL);
@@ -107,23 +105,25 @@ char	*get_next_line(int fd)
 	}
 	if (len != 0)
 		line = get_line_and_update(&storage, len);
-	else
+	else if (ft_strlen(storage) != 0)
 		line = get_endline(&storage);
+	else
+		return (NULL);
 	return (line);
 }
 
-// #include <stdio.h>
-// #include <fcntl.h>
-// int main(void)
-// {
-// 	int fd;
-// 	char *str;
-// 	fd = open("./test", O_RDONLY);
-// 	str = get_next_line(2);
-// 	while (str != NULL)
-// 	{
-// 		printf("%s", str);
-// 		str = get_next_line(fd);
-// 	}
-// 	return (0);
-// }
+
+#include <fcntl.h>
+int main(void)
+{
+	int fd;
+	char *str;
+	fd = open("./test", O_RDONLY);
+	str = get_next_line(fd);
+	while (str != NULL)
+	{
+		printf("%s", str);
+		str = get_next_line(fd);
+	}
+	return (0);
+}
