@@ -41,6 +41,11 @@ char	*read_stock(char *storage, int fd, int *end)
 		return (NULL);
 	}
 	*end = read(fd, buf, BUFFER_SIZE);
+	if (*end < 0)
+	{
+		free(buf);
+		return (NULL);
+	}
 	buf[*end] = '\0';
 	new = ft_strjoin(storage, buf);
 	free(buf);
@@ -100,7 +105,10 @@ char	*get_next_line(int fd)
 	{
 		storage = read_stock(storage, fd, end);
 		if (storage == NULL)
+		{
+			free(storage);
 			return (NULL);
+		}
 		len = get_line_len(storage);
 	}
 	if (len != 0)
