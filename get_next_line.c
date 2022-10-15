@@ -109,20 +109,19 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-#include <stdio.h>
-#include <fcntl.h>
-int main(void)
-{
-	int fd;
-	char *str;
-
-	// fd = open("./test", O_RDONLY);
-	fd = 0;
-	str = get_next_line(fd);
-	while (str != NULL)
-	{
-		printf("%s", str);
-		str = get_next_line(fd);
-	}
-	return (0);
-}
+// #include <stdio.h>
+// #include <fcntl.h>
+// int main(void)
+// {
+// 	int fd;
+// 	char *str;
+// 	// fd = open("./test", O_RDONLY);
+// 	fd = 0;
+// 	str = get_next_line(fd);
+// 	while (str != NULL)
+// 	{
+// 		printf("%s", str);
+// 		str = get_next_line(fd);
+// 	}
+// 	return (0);
+// }
