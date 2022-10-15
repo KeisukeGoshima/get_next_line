@@ -115,8 +115,7 @@ char	*get_next_line(int fd)
 // {
 // 	int fd;
 // 	char *str;
-// 	// fd = open("./test", O_RDONLY);
-// 	fd = 0;
+// 	fd = open("./test", O_RDONLY);
 // 	str = get_next_line(fd);
 // 	while (str != NULL)
 // 	{
