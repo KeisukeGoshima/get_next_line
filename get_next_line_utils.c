@@ -54,6 +54,7 @@ char	*ft_strjoin(char *s1, char *s2)
 char	*ft_strdup_idx(const char *s, int idx)
 {
 	char	*str;
+	int		i;
 
 	str = malloc(sizeof(char) * (idx + 2));
 	if (str == NULL)

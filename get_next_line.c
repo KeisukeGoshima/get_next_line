@@ -12,10 +12,11 @@
 
 #include "get_next_line.h"
 #include <stdio.h>
-char	*free_storage(char *storage)
+
+char	*free_memory(char *memory)
 {
-	if (storage != NULL)
-		free(storage);
+	if (memory != NULL)
+		free(memory);
 	return (NULL);
 }
 
@@ -44,16 +45,9 @@ char	*get_line(const char *s, int idx)
 		return (NULL);
 	if (idx == -1)
 		idx = ft_strlen(s) - 1;
-	line = malloc(sizeof(char) * (idx + 2));
+	line = ft_strdup_idx(s, idx);
 	if (line == NULL)
 		return (NULL);
-	i = 0;
-	while (i <= idx)
-	{
-		line[i] = s[i];
-		i++;
-	}
-	line[i] = '\0';
 	return (line);
 }
 
@@ -72,8 +66,8 @@ char	*storage_update(char *storage, int idx, char *line)
 	new = malloc(sizeof(char) * (i - j + 1));
 	if (new == NULL)
 	{
-		free(storage);
-		free(line);
+		free_memory(storage);
+		free_memory(line);
 		return (NULL);
 	}
 	while (j + k < i)
@@ -82,7 +76,7 @@ char	*storage_update(char *storage, int idx, char *line)
 		k++;
 	}
 	new[k] = '\0';
-	free(storage);
+	free_memory(storage);
 	return (new);
 }
 
@@ -93,14 +87,13 @@ char	*read_bufsize(char *storage, int fd, int *size)
 	
 	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (buf == NULL)
-		return (NULL);
+		return (free_memory(storage));
 	*size = read(fd, buf, BUFFER_SIZE);
 	buf[*size] = '\0';
 	temp = storage;
 	storage = ft_strjoin(storage, buf);
-	free(buf);
-	if (temp != NULL)
-		free(temp);
+	free_memory(buf);
+	free_memory(storage);
 	return (storage);
 }
 
@@ -112,24 +105,24 @@ char	*get_next_line(int fd)
 	int			size;
 
 	if (fd < 0 || fd > 256)
-		return (free_storage(storage));
+		return (NULL);
 	idx = search_storage_idx(storage, '\n');
 	size = 1;
 	while (idx == -1 && size != 0)
 	{
 		storage = read_bufsize(storage, fd, &size);
 		if (storage == NULL)
-			return (free_storage(storage));
+			return (free_memory(storage));
 		idx = search_storage_idx(storage, '\n');
 	}
 	line = get_line(storage, idx);
 	if (line == NULL)
-		return (free_storage(storage));
+		return (free_memory(storage));
 	storage = storage_update(storage, idx, line);
 	if (storage == NULL)
-		return (free_storage(storage));
+		return (free_memory(storage));
 	if (idx == -1 && size == 0)
-		free_storage(storage);
+		free_memory(storage);
 	return (line);
 }
 
