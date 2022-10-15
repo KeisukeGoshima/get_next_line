@@ -112,16 +112,11 @@ char	*get_next_line(int fd)
 		}
 		len = get_line_len(storage);
 	}
+	line = NULL;
 	if (len != 0)
 		line = get_line_and_update(&storage, len);
 	else if (ft_strlen(storage) != 0)
 		line = get_endline(&storage);
-	else
-	{
-		if (storage != NULL)
-			free(storage);
-		return (NULL);
-	}
 	if (line == NULL)
 		free(storage);
 	return (line);
