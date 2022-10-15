@@ -22,7 +22,7 @@ int	get_line_len(char *storage)
 	while (storage[i] != '\0')
 	{
 		if (storage[i] == '\n')
-			return (i+1);
+			return (i + 1);
 		i++;
 	}
 	return (0);
@@ -33,7 +33,7 @@ char	*read_stock(char *storage, int fd, int *end)
 	char	*buf;
 	char	*new;
 
-	buf =  malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (buf == NULL)
 		return (memoryfree(storage));
 	*end = read(fd, buf, BUFFER_SIZE);
@@ -84,7 +84,7 @@ char	*get_endline(char **storage)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char *storage;
+	static char	*storage;
 	int			len;
 	int			end[1];
 
