@@ -50,3 +50,20 @@ char	*ft_strjoin(char *s1, char *s2)
 	dest[i] = '\0';
 	return (dest);
 }
+
+char	*ft_strdup_idx(const char *s, int idx)
+{
+	char	*str;
+
+	str = malloc(sizeof(char) * (idx + 2));
+	if (str == NULL)
+		return (NULL);
+	i = 0;
+	while (i <= idx)
+	{
+		str[i] = s[i];
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
+}

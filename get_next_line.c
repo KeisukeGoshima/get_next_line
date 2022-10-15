@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
+#include <stdio.h>
 char	*free_storage(char *storage)
 {
 	if (storage != NULL)
@@ -86,7 +86,7 @@ char	*storage_update(char *storage, int idx, char *line)
 	return (new);
 }
 
-char	*read_bufsize(char *storage, char *buf, int fd, int *size)
+char	*read_bufsize(char *storage, int fd, int *size)
 {
 	char	*temp;
 	char	*buf;
@@ -101,14 +101,11 @@ char	*read_bufsize(char *storage, char *buf, int fd, int *size)
 	free(buf);
 	if (temp != NULL)
 		free(temp);
-	if (storage == NULL)
-		return (NULL);
 	return (storage);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*buf;
 	char		*line;
 	static char	*storage;
 	int			idx;
@@ -120,7 +117,7 @@ char	*get_next_line(int fd)
 	size = 1;
 	while (idx == -1 && size != 0)
 	{
-		storage = read_bufsize(storage, buf, fd, &size);
+		storage = read_bufsize(storage, fd, &size);
 		if (storage == NULL)
 			return (free_storage(storage));
 		idx = search_storage_idx(storage, '\n');
@@ -131,23 +128,23 @@ char	*get_next_line(int fd)
 	storage = storage_update(storage, idx, line);
 	if (storage == NULL)
 		return (free_storage(storage));
-	if (ft_strlen(storage) == 0)
+	if (idx == -1 && size == 0)
 		free_storage(storage);
 	return (line);
 }
 
-// #include <stdio.h>
-// #include <fcntl.h>
-// int main(void)
-// {
-// 	int fd;
-// 	char *str;
-// 	fd = open("./test", O_RDONLY);
-// 	str = get_next_line(fd);
-// 	while (str != NULL)
-// 	{
-// 		printf("%s", str);
-// 		str = get_next_line(fd);
-// 	}
-// 	return (0);
-// }
+#include <stdio.h>
+#include <fcntl.h>
+int main(void)
+{
+	int fd;
+	char *str;
+	fd = open("./test", O_RDONLY);
+	str = get_next_line(2);
+	while (str != NULL)
+	{
+		printf("%s", str);
+		str = get_next_line(fd);
+	}
+	return (0);
+}
