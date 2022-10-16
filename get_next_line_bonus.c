@@ -10,18 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/16 10:57:31 by marvin            #+#    #+#             */
-/*   Updated: 2022/10/16 10:57:31 by marvin           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line_bonus.h"
 
 int	get_line_len(char *storage)
@@ -104,8 +92,8 @@ char	*get_next_line(int fd)
 	*end = 1;
 	while (len == 0 && *end != 0)
 	{
-		storage = read_stock(storage[fd], fd, end);
-		if (storage == NULL)
+		storage[fd] = read_stock(storage[fd], fd, end);
+		if (storage[fd] == NULL)
 			return (memoryfree(&storage[fd]));
 		len = get_line_len(storage[fd]);
 	}
