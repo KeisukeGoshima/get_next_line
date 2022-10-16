@@ -35,14 +35,14 @@ char	*read_stock(char *storage, int fd, int *end)
 
 	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (buf == NULL)
-		return (memoryfree(storage));
+		return (memoryfree(&storage));
 	*end = read(fd, buf, BUFFER_SIZE);
 	if (*end < 0)
-		return (memoryfree(buf));
+		return (memoryfree(&buf));
 	buf[*end] = '\0';
 	new = ft_strjoin(storage, buf);
-	memoryfree(buf);
-	memoryfree(storage);
+	memoryfree(&buf);
+	memoryfree(&storage);
 	return (new);
 }
 
@@ -54,7 +54,7 @@ char	*get_line_and_update(char **storage, int len)
 
 	line = malloc(sizeof(char) * (len + 1));
 	if (line == NULL)
-		return (memoryfree(*storage));
+		return (memoryfree(storage));
 	i = 0;
 	while (i < len)
 	{
@@ -64,8 +64,7 @@ char	*get_line_and_update(char **storage, int len)
 	line[len] = '\0';
 	temp = *storage;
 	*storage = ft_strdup(&temp[len]);
-	memoryfree(temp);
-	temp = NULL;
+	memoryfree(&temp);
 	if (*storage == NULL)
 		return (NULL);
 	return (line);
@@ -76,8 +75,7 @@ char	*get_endline(char **storage)
 	char	*line;
 
 	line = ft_strdup(*storage);
-	memoryfree(*storage);
-	*storage = NULL;
+	memoryfree(storage);
 	return (line);
 }
 
@@ -96,7 +94,7 @@ char	*get_next_line(int fd)
 	{
 		storage = read_stock(storage, fd, end);
 		if (storage == NULL)
-			return (memoryfree(storage));
+			return (memoryfree(&storage));
 		len = get_line_len(storage);
 	}
 	line = NULL;
@@ -105,7 +103,7 @@ char	*get_next_line(int fd)
 	else if (ft_strlen(storage) != 0)
 		line = get_endline(&storage);
 	if (line == NULL)
-		memoryfree(storage);
+		memoryfree(&storage);
 	return (line);
 }
 

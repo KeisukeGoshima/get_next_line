@@ -71,9 +71,10 @@ char	*ft_strdup(const char *s)
 	return (str);
 }
 
-char	*memoryfree(char *memory)
+char	*memoryfree(char **memory)
 {
-	if (memory != NULL)
-		free(memory);
+	if (*memory != NULL)
+		free(*memory);
+	*memory = NULL;
 	return (NULL);
 }
